@@ -13,33 +13,39 @@ const firstPromise = new Promise((resolve, reject) => {
 });
 
 const secondPromise = new Promise((resolve) => {
-  document.addEventListener('click', () => {
-    resolve('Second promise was resolved');
-  });
+  let isResolved = false;
 
-  document.addEventListener('contextmenu', () => {
-    resolve('Second promise was resolved');
-  });
+  function handleEvent() {
+    if (!isResolved) {
+      isResolved = true;
+      resolve('Second promise was resolved');
+    }
+  }
+
+  document.addEventListener('click', handleEvent);
+  document.addEventListener('contextmenu', handleEvent);
 });
 
 const thirdPromise = new Promise((resolve) => {
   let hasLeftClick = false;
   let hasRightClick = false;
+  let isResolved = false;
+
+  function checkResolution() {
+    if (hasLeftClick && hasRightClick && !isResolved) {
+      isResolved = true;
+      resolve('Third promise was resolved');
+    }
+  }
 
   document.addEventListener('click', () => {
     hasLeftClick = true;
-
-    if (hasLeftClick && hasRightClick) {
-      resolve('Third promise was resolved');
-    }
+    checkResolution();
   });
 
   document.addEventListener('contextmenu', () => {
     hasRightClick = true;
-
-    if (hasLeftClick && hasRightClick) {
-      resolve('Third promise was resolved');
-    }
+    checkResolution();
   });
 });
 
